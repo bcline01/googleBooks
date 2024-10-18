@@ -1,4 +1,4 @@
 import User from './User';
-import bookSchema from './Book';
+import Book from './Book';
 
-export  { User, bookSchema };
+export  { User, Book };

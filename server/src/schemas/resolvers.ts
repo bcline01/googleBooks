@@ -1,4 +1,4 @@
-import  {User}  from '../models/index.js'
+import  { User, Book }  from '../models/index.js'
 import { signToken, AuthenticationError } from '../services/auth.js'; 
 
 // Define Interfaces
@@ -16,13 +16,6 @@ interface AddUserArgs {
     password: string;
   }
   
-//   interface UserArgs {
-//     username: string;
-//   }
-
-//   interface BookArgs {
-//     bookId: string;
-//   }
 
   interface SaveBookArgs {
     input: {
@@ -86,27 +79,61 @@ interface AddUserArgs {
           },
           saveBook: async (_parent: any, { input }: SaveBookArgs, context: any) => {
             if (context.user) {
-                const updatedUser = await User.findOneAndUpdate(
+              try {
+                // Create the book
+                const book = await Book.create(input);
+                const updatedUser = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { savedBooks: input } },
+                    { $addToSet: { savedBooks: book._id } },
                     { new: true, runValidators: true }
-                  );
-                  return updatedUser;
-            }
-            throw AuthenticationError;
-          },
+                  ).populate('savedBooks');
+                  if (!updatedUser) {
+                    throw new Error('User not found');
+                  }
+        
+                  // Return the newly created book, not the user
+                  return book;
+                } catch (error) {
+                  console.error('Error in saveBook mutation:', error);
+                  throw new Error('Failed to save the book');
+                }
+              }
+              throw new AuthenticationError('You need to be logged in!');
+            },
+          
           deleteBook: async (_parent: any, { bookId }: RemoveBookArgs, context: any) => {
-            const updatedUser = await User.findOneAndUpdate(
-                { _id: context.user._id },
-                { $pull: { savedBooks: { bookId } } },
-                { new: true }
-              );
-              if (!updatedUser) {
-                throw AuthenticationError;
+            if (context.user) {
+              try {
+                // Find the book by bookId, not _id
+                const book = await Book.findOneAndDelete({ bookId: bookId });
+      
+                if (!book) {
+                  throw new Error('No book found with this ID.');
+                }
+      
+                // Remove the book from the user's savedBooks
+                const updatedUser = await User.findByIdAndUpdate(
+                  context.user._id,
+                  { $pull: { savedBooks: book._id } },
+                  { new: true }
+                ).populate('savedBooks');
+      
+                if (!updatedUser) {
+                  throw new Error('User not found');
+                }
+      
+                console.log('Book removed:', book);
+                console.log('Updated user:', updatedUser);
+      
+                return book; // Return the book that was removed
+              } catch (error) {
+                console.error('Error in removeBook mutation:', error);
+                throw new Error('Failed to remove the book');
+              }
             }
-              return updatedUser;
-          }
-    }
-  };
+            throw new AuthenticationError('You need to be logged in!');
+          },
+        },
+      };
 
   export default resolvers;
