@@ -8,12 +8,9 @@ import type { User } from '../models/User';
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
 // biome-ignore lint/correctness/noEmptyPattern: <explanation>
-const SignupForm = ({}: { handleModalClose: () => void }) => {
-  // set initial form state
+const SignupForm = () => {
   const [userFormData, setUserFormData] = useState<User>({ username: '', email: '', password: '', savedBooks: [] });
-  // set state for form validation
-  const [validated] = useState(false);
-  // set state for alert
+  const [validated, setValidated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [addUser] = useMutation(ADD_USER);
 
@@ -28,12 +25,14 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
+      // event.preventDefault();
       event.stopPropagation();
+    } else {
+      setValidated(true);
     }
 
     try {
-      console.log('Attempting to add user with data:', userFormData);
+     
       const { data } = await addUser({
         variables: { 
           input: {
@@ -43,7 +42,7 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
           } 
         },
       });
-      console.log('Response from addUser mutation:', data);
+      
   
       // enhanced login check
       if (data && data.addUser && data.addUser.token) {
