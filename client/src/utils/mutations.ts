@@ -13,7 +13,7 @@ export const LOGIN_USER = gql`
   }
 `;
 
-// Mutation for adding a new user (signup)
+// Mutation for adding a new user
 export const ADD_USER = gql`
   mutation addUser($input: UserInput!) {
     addUser(input: $input) {
@@ -26,7 +26,7 @@ export const ADD_USER = gql`
   }
 `;
 
-// Mutation for saving a book to a user's collection
+// Mutation for saving a book 
 export const SAVE_BOOK = gql`
   mutation saveBook($input: BookInput!) {
     saveBook(input: $input) {
@@ -40,7 +40,7 @@ export const SAVE_BOOK = gql`
   }
 `;
 
-// Mutation for removing a book from a user's collection
+// Mutation for removing a book 
 export const REMOVE_BOOK = gql`
   mutation removeBook($bookId: ID!) {
     removeBook(bookId: $bookId) {
