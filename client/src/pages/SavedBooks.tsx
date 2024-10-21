@@ -1,6 +1,3 @@
-// import { useState, useEffect } from 'react';
-import { Container, Card, Button, Row, Col } from 'react-bootstrap';
-
 // import { getMe, deleteBook } from '../utils/API';
 import { GET_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
@@ -8,25 +5,21 @@ import { useMutation, useQuery} from '@apollo/client';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 import type { User } from '../models/User';
-import { useParams } from 'react-router-dom';
+import { Container, Card, Button, Row, Col } from 'react-bootstrap';
+
 
 const SavedBooks: React.FC = () => {
-  const { username: userParam } = useParams();
-
   const { loading, error, data } = useQuery(GET_ME);
 
   const [removeBook] = useMutation(REMOVE_BOOK, {
-    refetchQueries: [
-      { query: GET_ME, variables: { username: userParam } },
-    ]
+    refetchQueries: [{ query: GET_ME }],
   });
 
   console.log('Query data:', data);
 
-  const userData: User = data?.me || data?.user || {};
+  const userData: User = data?.me || {};
   console.log('User data:', userData);
   console.log('Saved books:', userData.savedBooks);
-  
 
   const handleDeleteBook = async (bookId: string) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
@@ -66,17 +59,17 @@ const SavedBooks: React.FC = () => {
       </div>
       <Container>
         <h2 className='pt-5'>
-          {userData.savedBooks.length
+          {userData.savedBooks?.length
             ? `Viewing ${userData.savedBooks.length} saved ${
                 userData.savedBooks.length === 1 ? 'book' : 'books'
               }:`
             : 'You have no saved books!'}
         </h2>
         <Row>
-          {userData.savedBooks.map((book) => {
+          {userData.savedBooks?.map((book) => {
             return (
-              <Col md='4'>
-                <Card key={book.bookId} border='dark'>
+              <Col md='4' key={book.bookId}>
+                <Card border='dark'>
                   {book.image ? (
                     <Card.Img
                       src={book.image}
