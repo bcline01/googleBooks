@@ -3,9 +3,9 @@ import bcrypt from 'bcrypt';
 
 // import schema from Book.js
 // import bookSchema from './Book.js';
-import  { type BookDocument, Book } from './Book.js';
+import  { type BookDocument, bookSchema } from './Book.js';
 
-export interface UserDocument extends Document {
+ interface UserDocument extends Document {
   _id: string;
   username: string;
   email: string;
@@ -34,7 +34,7 @@ const userSchema = new Schema<UserDocument>(
     },
     // set savedBooks to be an array of data that adheres to the bookSchema
     savedBooks: [
-     Book
+     bookSchema
     ],
 },
   // set this to use virtual below

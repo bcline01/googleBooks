@@ -1,6 +1,6 @@
 
 export const searchGoogleBooks = (query: string) => {
-  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&key=AIzaSyCJlJFPHdMcqr8aBEIZYqa4YMe0_LtJxRE`);
 };
 // old API routes
 // import type { User } from '../models/User.js';

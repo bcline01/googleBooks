@@ -37,8 +37,11 @@ interface AddUserArgs {
         me: async (_parent: any, _args: any, context: any) => {
             // If the user is authenticated, find and return the user's information along with their thoughts
             if (context.user) {
-              return User.findOne({ _id: context.user._id });
+              const user = await User.findOne({ _id: context.user._id });
+              // console.log(user);
+              return user;
             }
+            
             // If the user is not authenticated, throw an AuthenticationError
             throw new AuthenticationError('Could not authenticate user.');
           },
@@ -80,11 +83,12 @@ interface AddUserArgs {
           saveBook: async (_parent: any, { input }: SaveBookArgs, context: any) => {
             if (context.user) {
               try {
+                console.log(input);
                 // Create the book
-                const book = await Book.create(input);
+                // const book = await Book.create(input);
                 const updatedUser = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { savedBooks: book._id } },
+                    { $addToSet: { savedBooks: input } },
                     { new: true, runValidators: true }
                   ).populate('savedBooks');
                   if (!updatedUser) {
@@ -92,7 +96,7 @@ interface AddUserArgs {
                   }
         
                   // Return the newly created book, not the user
-                  return book;
+                  return updatedUser;
                 } catch (error) {
                   console.error('Error in saveBook mutation:', error);
                   throw new Error('Failed to save the book');
