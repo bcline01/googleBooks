@@ -17,14 +17,25 @@ export const saveBookIds = (bookIdArr: string[]) => {
 export const removeBookId = (bookId: string) => {
   const savedBookIds = localStorage.getItem('saved_books')
     ? JSON.parse(localStorage.getItem('saved_books')!)
-    : null;
+    : [];
 
-  if (!savedBookIds) {
-    return false;
+  // Log the current savedBookIds
+  console.log('Current saved book IDs:', savedBookIds);
+
+  // Filter out the bookId
+  const updatedSavedBookIds = savedBookIds.filter((savedBookId: string) => savedBookId !== bookId);
+
+  // If the array is unchanged, log a message
+  if (savedBookIds.length === updatedSavedBookIds.length) {
+    console.log(`Book ID ${bookId} not found in saved books.`);
+    return false; // No changes made
   }
 
-  const updatedSavedBookIds = savedBookIds?.filter((savedBookId: string) => savedBookId !== bookId);
+  // Update local storage
   localStorage.setItem('saved_books', JSON.stringify(updatedSavedBookIds));
-
+  console.log('Updated saved book IDs:', updatedSavedBookIds);
+  
   return true;
 };
+
+

@@ -105,7 +105,7 @@ interface AddUserArgs {
               throw new AuthenticationError('You need to be logged in!');
             },
           
-          deleteBook: async (_parent: any, { bookId }: RemoveBookArgs, context: any) => {
+          removeBook: async (_parent: any, { bookId }: RemoveBookArgs, context: any) => {
             if (context.user) {
               try {
                 // Find the book by bookId, not _id
