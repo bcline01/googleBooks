@@ -1,5 +1,5 @@
 import express from 'express';
-import path from 'node:path';
+// import path from 'node:path';
 import type { Request, Response } from 'express';
 import db from './config/connection.js'
 import { ApolloServer } from '@apollo/server';// Note: Import from @apollo/server-express
